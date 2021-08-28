@@ -11,7 +11,7 @@
 
       <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form class="space-y-6" action="#" method="POST">
+          <form class="space-y-6" @submit.prevent="sumDealerDiscount">
             <div>
               <label
                 for=""
@@ -133,8 +133,7 @@
     </div>
 
     <!-- Input Table Data -->
-
-    <div class="flex flex-col px-10">
+    <div class="flex flex-col px-10 pb-20" v-if="dealerDiscountValue">
       <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
           <div
@@ -179,27 +178,27 @@
               <tbody>
                 <tr class="bg-gray-50">
                   <td
+                    class="px-6 text-left py-4 whitespace-nowrap text-sm  font-medium text-gray-900"
+                  >
+                    ${{ msrp }}
+                  </td>
+                  <td
                     class="px-6 text-left py-4 whitespace-nowrap text-sm font-medium text-gray-900"
                   >
-                    {{ msrp }}
+                    ${{ sales_price }}
                   </td>
                   <td
-                    class="px-6 text-left py-4 whitespace-nowrap text-sm text-gray-500"
+                    class="px-6 text-left py-4 whitespace-nowrap text-sm font-medium text-gray-900"
                   >
-                    {{ sales_price }}
+                    ${{ down_das }}
                   </td>
                   <td
-                    class="px-6 text-left py-4 whitespace-nowrap text-sm text-gray-500"
+                    class="px-6 text-left py-4 whitespace-nowrap text-sm font-medium text-gray-900"
                   >
-                    {{ down_das }}
+                    ${{ rebates }}
                   </td>
                   <td
-                    class="px-6 text-left py-4 whitespace-nowrap text-sm text-gray-500"
-                  >
-                    {{ rebates }}
-                  </td>
-                  <td
-                    class="px-6 text-left py-4 whitespace-nowrap text-sm text-gray-500"
+                    class="px-6 text-left py-4 whitespace-nowrap text-sm font-medium text-gray-900"
                   >
                     ${{ dealer_discount }}
                   </td>
@@ -222,11 +221,12 @@ export default {
   },
   data() {
     return {
-      msrp: null,
+      msrp: '',
       dealer_discount: null,
-      rebates: null,
-      down_das: null,
-      sales_price: null,
+      rebates: '',
+      down_das: '',
+      sales_price: '',
+
       money: {
         decimal: ',',
         thousands: '.',
@@ -234,6 +234,7 @@ export default {
         precision: 2,
         masked: false,
       },
+      dealerDiscountValue: false,
     }
   },
 
@@ -252,20 +253,13 @@ export default {
     },
     sales_price(val) {
       localStorage.sales_price = val
+      this.dealer_discount = this.msrp - this.sales_price - this.rebates
     },
-  },
-
-  computed() {
-    return {
-      dealerDisCalculation() {
-        this.sumDealerDiscount = this.dealer_discount
-      },
-    }
   },
 
   methods: {
     sumDealerDiscount() {
-      this.dealer_discount = this.msrp - this.sales_price - this.rebates
+      this.dealerDiscountValue = true
     },
   },
 }
